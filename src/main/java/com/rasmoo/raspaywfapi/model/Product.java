@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Document("products")
 @Data
@@ -33,5 +33,5 @@ public class Product {
     @NotNull
     private BigDecimal currentPrice;
 
-    private LocalDate dtCreation = LocalDate.now();
+    private LocalDateTime dtCreation = LocalDateTime.now();
 }
