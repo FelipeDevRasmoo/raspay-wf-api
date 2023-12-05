@@ -1,0 +1,6 @@
+server:
+  port: 8083
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://admin:admin@raspay-webflux-cluster.ur7trbh.mongodb.net/raspay?retryWrites=true&w=majority
