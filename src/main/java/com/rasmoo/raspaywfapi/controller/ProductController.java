@@ -1,6 +1,9 @@
 package com.rasmoo.raspaywfapi.controller;
 
 import com.rasmoo.raspaywfapi.dto.ProductDto;
+import com.rasmoo.raspaywfapi.model.Product;
+import com.rasmoo.raspaywfapi.service.ProductService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,16 +16,19 @@ import reactor.core.publisher.Mono;
 
 @RequestMapping("/v1/product")
 @RestController
+@RequiredArgsConstructor
 public class ProductController {
+
+    private ProductService productService;
 
     @PostMapping
     public ResponseEntity<Mono<Void>> create(@RequestBody ProductDto productDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(null);
+        return ResponseEntity.status(HttpStatus.CREATED).body(productService.create(productDto).then());
     }
 
     @GetMapping
-    public ResponseEntity<Flux<ProductDto>> findAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+    public ResponseEntity<Flux<Product>> findAll() {
+        return ResponseEntity.status(HttpStatus.OK).body(productService.findAll());
     }
 
 
