@@ -19,7 +19,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class ProductController {
 
-    private ProductService productService;
+    private final ProductService productService;
 
     @PostMapping
     public ResponseEntity<Mono<Void>> create(@RequestBody ProductDto productDto) {

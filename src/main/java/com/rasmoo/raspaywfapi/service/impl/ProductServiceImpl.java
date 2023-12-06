@@ -13,9 +13,9 @@ import reactor.core.publisher.Mono;
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
-    private ProductMapper productMapper;
+    private final ProductMapper productMapper;
     @Override
     public Mono<Product> create(ProductDto dto) {
         return productRepository.save(productMapper.toModel(dto));

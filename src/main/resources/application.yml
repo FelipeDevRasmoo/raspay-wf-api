@@ -1,8 +1,8 @@
 server:
-  servlet:
-    context-path: /raspay-api
   port: 8083
 spring:
   data:
     mongodb:
       uri: ${MONGODB_URI}
+  webflux:
+    base-path: /raspay-api
