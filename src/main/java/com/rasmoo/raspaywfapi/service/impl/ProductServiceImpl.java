@@ -25,4 +25,9 @@ public class ProductServiceImpl implements ProductService {
     public Flux<Product> findAll() {
         return productRepository.findAll();
     }
+
+    @Override
+    public Mono<Product> findByAcronym(String acronym) {
+        return productRepository.findByAcronym(acronym);
+    }
 }

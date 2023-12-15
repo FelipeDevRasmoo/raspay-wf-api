@@ -10,4 +10,6 @@ public interface ProductService {
     Mono<Product> create(ProductDto dto);
 
     Flux<Product> findAll();
+
+    Mono<Product> findByAcronym(String acronym);
 }
