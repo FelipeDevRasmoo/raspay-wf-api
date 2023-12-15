@@ -1,7 +1,6 @@
 package com.rasmoo.raspaywfapi.model;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,6 +21,7 @@ public class Customer {
     private String id;
 
     @Email
+    @Indexed(unique = true)
     private String email;
 
     private String firstName;
@@ -29,7 +29,6 @@ public class Customer {
     private String lastName;
 
     @CPF
-    @NotBlank
     @Indexed(unique = true)
     private String cpf;
 }
