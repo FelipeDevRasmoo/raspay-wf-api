@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -40,6 +41,15 @@ public class ProductController {
     @GetMapping("name/{name}")
     public ResponseEntity<Flux<Product>> findAllByName(@PathVariable("name") String name) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.findAllByName(name));
+    }
+
+    @GetMapping("params")
+    public ResponseEntity<Flux<Product>> findAllByParams(
+            @RequestParam(value = "acronym", required = false, defaultValue = "") String acronym,
+            @RequestParam(value = "name", required = false, defaultValue = "") String name,
+            @RequestParam(value = "currentPrice", required = false, defaultValue = "") String currentPrice
+            ) {
+        return ResponseEntity.status(HttpStatus.OK).body(productService.findAllByParams(acronym,name,currentPrice));
     }
 
 }

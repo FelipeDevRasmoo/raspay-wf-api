@@ -14,4 +14,6 @@ public interface ProductService {
     Mono<Product> findByAcronym(String acronym);
 
     Flux<Product> findAllByName(String name);
+
+    Flux<Product> findAllByParams(String acronym, String name, String currentPrice);
 }
