@@ -25,9 +25,21 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
     private final CustomerMapper mapper;
     private final ReactiveMongoTemplate mongoTemplate;
+
+    @Override
+    public Mono<Customer> findById(String id) {
+        return customerRepository.findById(id)
+                .switchIfEmpty(Mono.error(new RuntimeException("Customer not found")));
+    }
+
     @Override
     public Mono<Customer> create(CustomerDto dto) {
-        return customerRepository.save(mapper.toModel(dto));
+        return customerRepository.findByEmail(dto.email())
+                .flatMap(customer -> {
+                    customer.setFirstName(dto.firstName());
+                    customer.setLastName(dto.lastName());
+                    return customerRepository.save(customer);
+                }).switchIfEmpty(customerRepository.save(mapper.toModel(dto)));
     }
 
     @Override
