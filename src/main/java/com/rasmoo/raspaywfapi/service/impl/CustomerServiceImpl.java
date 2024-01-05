@@ -1,6 +1,7 @@
 package com.rasmoo.raspaywfapi.service.impl;
 
 import com.rasmoo.raspaywfapi.dto.CustomerDto;
+import com.rasmoo.raspaywfapi.exception.NotFoundException;
 import com.rasmoo.raspaywfapi.mapper.CustomerMapper;
 import com.rasmoo.raspaywfapi.model.Customer;
 import com.rasmoo.raspaywfapi.repository.CustomerRepository;
@@ -29,7 +30,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Mono<Customer> findById(String id) {
         return customerRepository.findById(id)
-                .switchIfEmpty(Mono.error(new RuntimeException("Customer not found")));
+                .switchIfEmpty(Mono.error(() -> new NotFoundException("Customer not found")));
     }
 
     @Override

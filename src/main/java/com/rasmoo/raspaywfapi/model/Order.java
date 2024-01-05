@@ -19,13 +19,13 @@ import java.time.LocalDateTime;
 public class Order {
 
     @Id
-    private String idl;
+    private String id;
 
     private BigDecimal originalPrice;
 
     private BigDecimal discount;
 
-    private LocalDateTime dtRegistedOrder;
+    private LocalDateTime dtRegistedOrder = LocalDateTime.now();
 
     @DBRef
     private Customer customer;
