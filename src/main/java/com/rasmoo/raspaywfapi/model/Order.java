@@ -25,7 +25,7 @@ public class Order {
 
     private BigDecimal discount;
 
-    private LocalDateTime dtRegistedOrder = LocalDateTime.now();
+    private LocalDateTime dtRegistedOrder;
 
     @DBRef
     private Customer customer;
