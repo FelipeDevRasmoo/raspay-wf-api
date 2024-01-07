@@ -16,9 +16,9 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class CreditCardServiceImpl implements CreditCardService {
 
-    private CreditCardRepository creditCardRepository;
+    private final CreditCardRepository creditCardRepository;
 
-    private CreditCardMapper mapper;
+    private final CreditCardMapper mapper;
 
     @Override
     public Mono<CreditCard> findByNumber(String number) {
