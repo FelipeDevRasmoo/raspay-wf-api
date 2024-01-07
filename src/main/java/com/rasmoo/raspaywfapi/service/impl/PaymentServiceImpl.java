@@ -2,6 +2,7 @@ package com.rasmoo.raspaywfapi.service.impl;
 
 import com.rasmoo.raspaywfapi.dto.PaymentDto;
 import com.rasmoo.raspaywfapi.emums.PaymentStatus;
+import com.rasmoo.raspaywfapi.model.CreditCard;
 import com.rasmoo.raspaywfapi.model.Customer;
 import com.rasmoo.raspaywfapi.model.Order;
 import com.rasmoo.raspaywfapi.model.Payment;
@@ -30,39 +31,42 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Mono<Payment> process(PaymentDto paymentDto) {
-
         Mono<Customer> customerMono = customerService.findById(paymentDto.customerId());
         Mono<Order> orderMono = orderService.findById(paymentDto.orderId());
-
         return Mono.zip(customerMono, orderMono, (customer, order) ->
-             creditCardService.findByNumber(paymentDto.creditCard().number())
-                     .flatMap(creditCard -> {
-                         var paymentBuilder = Payment.builder();
-                         paymentBuilder
-                                 .dtRegistedPayment(LocalDateTime.now())
-                                 .order(order)
-                                 .customer(customer)
-                                 .creditCard(creditCard);
-                         if (creditCard.getCustomer().getId().equals(customer.getId())
-                         || creditCard.getDocumentNumber().equals(customer.getCpf())) {
-                             paymentBuilder.status(PaymentStatus.APPROVED);
-                         } else {
-                             paymentBuilder.status(PaymentStatus.DISAPPROVED);
-                         }
-                         return paymentRepository.save(paymentBuilder.build());
-
-                     }).onErrorResume(error->
-                         creditCardService.create(paymentDto.creditCard(), customer)
-                                 .flatMap(creditCard -> {
-                                     var paymentBuilder = Payment.builder();
-                                     paymentBuilder
-                                             .dtRegistedPayment(LocalDateTime.now())
-                                             .order(order)
-                                             .customer(customer)
-                                             .creditCard(creditCard);
-                                     return paymentRepository.save(paymentBuilder.build());
-                                 })
-                     )
+                creditCardService.findByNumber(paymentDto.creditCard().number())
+                        .flatMap(creditCard ->
+                                authorizePayment(customer, order, creditCard)
+                        ).onErrorResume(error ->
+                                authorizePaymentWithNewCreditCard(paymentDto, customer, order)
+                        )
         ).flatMap(paymentMono -> paymentMono);
+    }
+
+    private Mono<Payment> authorizePaymentWithNewCreditCard(PaymentDto paymentDto, Customer customer, Order order) {
+        return creditCardService.create(paymentDto.creditCard(), customer)
+                .flatMap(creditCard ->
+                        savePayment(customer, order, creditCard, PaymentStatus.APPROVED)
+                );
+    }
+
+    private Mono<Payment> authorizePayment(Customer customer, Order order, CreditCard creditCard) {
+        if (creditCard.getCustomer().getId().equals(customer.getId())
+                || creditCard.getDocumentNumber().equals(customer.getCpf())) {
+            return savePayment(customer, order, creditCard, PaymentStatus.APPROVED);
+        } else {
+            return savePayment(customer, order, creditCard, PaymentStatus.DISAPPROVED);
+        }
+    }
+
+    private Mono<Payment> savePayment(Customer customer, Order order, CreditCard creditCard, PaymentStatus status) {
+        var paymentBuilder = Payment.builder();
+        paymentBuilder
+                .dtRegistedPayment(LocalDateTime.now())
+                .order(order)
+                .customer(customer)
+                .creditCard(creditCard)
+                .status(status);
+        return paymentRepository.save(paymentBuilder.build());
     }
 }
