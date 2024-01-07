@@ -1,6 +1,5 @@
 package com.rasmoo.raspaywfapi.model;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,26 +8,27 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document("credit-cards")
-@AllArgsConstructor
+import java.time.LocalDateTime;
+
+@Document("payments")
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
 @Builder
-public class CreditCard {
+public class Payment {
 
     @Id
     private String id;
 
-    @NotBlank
-    private String number;
+    private String status;
 
-    private String cvv;
+    private LocalDateTime dtRegistedPayment;
 
-    private int year;
+    @DBRef
+    private CreditCard creditCard;
 
-    private String documentNumber;
-
-    private int installments;
+    @DBRef
+    private Order order;
 
     @DBRef
     private Customer customer;
