@@ -10,6 +10,6 @@ import org.mapstruct.Mapping;
 )
 public interface CreditCardMapper {
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "customer", ignore = true)
+    @Mapping(target = "customerId", ignore = true)
     CreditCard toModel(CreditCardDto dto);
 }

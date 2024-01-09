@@ -28,19 +28,21 @@ public class OrderServiceImpl implements OrderService {
     public Mono<Order> create(OrderDto orderDto) {
         return customerService.findById(orderDto.customerId())
                 .flatMap(customer -> productService.findByAcronym(orderDto.productAcronym())
-                .flatMap(product -> {
+                        .flatMap(product -> {
                     Order order = mapper.toModel(orderDto);
                     if (orderDto.discount().intValue() > 0) {
-                        if (orderDto.discount().compareTo(product.getCurrentPrice()) > 0) {
-                            return Mono.error(() -> new BadRequestException("Discount can not be greater than currentPrice"));
+                        if (orderDto.discount()
+                                .compareTo(product.getCurrentPrice()) > 0) {
+                            return Mono.error(() ->
+                                    new BadRequestException("Discount can not be greater than currentPrice"));
                         }
                         order.setOriginalPrice(product.getCurrentPrice().subtract(orderDto.discount()));
                     } else {
                         order.setOriginalPrice(product.getCurrentPrice());
                     }
                     order.setDtRegistedOrder(LocalDateTime.now());
-                    order.setProduct(product);
-                    order.setCustomer(customer);
+                    order.setProductId(product.getId());
+                    order.setCustomerId(customer.getId());
                     return orderRepository.save(order);
                 }));
     }

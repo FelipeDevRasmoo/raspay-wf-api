@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
@@ -25,12 +24,9 @@ public class Payment {
 
     private LocalDateTime dtRegistedPayment;
 
-    @DBRef
-    private CreditCard creditCard;
+    private String creditCardId;
 
-    @DBRef
-    private Order order;
+    private String orderId;
 
-    @DBRef
-    private Customer customer;
+    private String customerId;
 }
