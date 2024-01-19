@@ -4,7 +4,9 @@ import com.rasmoo.raspaywfapi.dto.OrderDto;
 import com.rasmoo.raspaywfapi.exception.BadRequestException;
 import com.rasmoo.raspaywfapi.exception.NotFoundException;
 import com.rasmoo.raspaywfapi.mapper.OrderMapper;
+import com.rasmoo.raspaywfapi.model.Customer;
 import com.rasmoo.raspaywfapi.model.Order;
+import com.rasmoo.raspaywfapi.model.Product;
 import com.rasmoo.raspaywfapi.repository.OrderRepository;
 import com.rasmoo.raspaywfapi.service.CustomerService;
 import com.rasmoo.raspaywfapi.service.OrderService;
@@ -26,9 +28,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Mono<Order> create(OrderDto orderDto) {
-        return customerService.findById(orderDto.customerId())
-                .flatMap(customer -> productService.findByAcronym(orderDto.productAcronym())
-                        .flatMap(product -> {
+        Mono<Customer> customerMono = customerService.findById(orderDto.customerId());
+       Mono<Product> productMono =  productService.findByAcronym(orderDto.productAcronym());
+        return Mono.zip(customerMono, productMono)
+                .flatMap(tuple -> {
+                    Customer customer = tuple.getT1();
+                    Product product = tuple.getT2();
                     Order order = mapper.toModel(orderDto);
                     if (orderDto.discount().intValue() > 0) {
                         if (orderDto.discount()
@@ -44,7 +49,7 @@ public class OrderServiceImpl implements OrderService {
                     order.setProductId(product.getId());
                     order.setCustomerId(customer.getId());
                     return orderRepository.save(order);
-                }));
+                });
     }
 
     @Override
