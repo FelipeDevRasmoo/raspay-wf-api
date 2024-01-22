@@ -3,6 +3,7 @@ package com.rasmoo.raspaywfapi.controller;
 import com.rasmoo.raspaywfapi.dto.CustomerDto;
 import com.rasmoo.raspaywfapi.model.Customer;
 import com.rasmoo.raspaywfapi.service.CustomerService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @PostMapping
-    public ResponseEntity<Mono<Customer>> create(@RequestBody CustomerDto customerDto) {
+    public ResponseEntity<Mono<Customer>> create(@RequestBody @Valid CustomerDto customerDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(customerService.create(customerDto));
     }
 
