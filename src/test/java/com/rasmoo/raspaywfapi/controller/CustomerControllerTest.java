@@ -22,6 +22,8 @@ import static org.mockito.Mockito.when;
 @WebFluxTest(CustomerController.class)
 class CustomerControllerTest {
 
+    private final static String URI = "/v1/customer" ;
+
     @Autowired
     private WebTestClient webTestClient;
 
@@ -42,7 +44,7 @@ class CustomerControllerTest {
 
         webTestClient.get().uri(uriBuilder ->
             uriBuilder
-                    .path("/v1/customer")
+                    .path(URI)
                     .queryParam("pageNumber",0)
                     .queryParam("pageSize", 1)
                     .queryParam("cpf", "00000000000")
@@ -72,7 +74,7 @@ class CustomerControllerTest {
 
         when(customerService.create(customerRequest)).thenReturn(Mono.just(customerSaved));
 
-        webTestClient.post().uri("/v1/customer")
+        webTestClient.post().uri(URI)
                 .accept(MediaType.APPLICATION_JSON)
                 .bodyValue(customerRequest)
                 .exchange()
@@ -82,4 +84,36 @@ class CustomerControllerTest {
 
     }
 
+
+    @Test
+    void shouldReturnBadRequestWhenCPFIsInvalid() {
+        CustomerDto customerRequest = new CustomerDto(
+                "Emanuel",
+                "Bandeira",
+                "emanuel@email.com",
+                "00000000000"
+        );
+
+        webTestClient.post().uri(URI)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(customerRequest)
+                .exchange()
+                .expectStatus().isBadRequest();
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenEmailIsInvalid() {
+        CustomerDto customerRequest = new CustomerDto(
+                "Emanuel",
+                "Bandeira",
+                "email",
+                "40750233036"
+        );
+
+        webTestClient.post().uri(URI)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(customerRequest)
+                .exchange()
+                .expectStatus().isBadRequest();
+    }
 }
