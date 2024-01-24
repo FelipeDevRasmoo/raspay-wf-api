@@ -34,12 +34,6 @@ dependencies {
     testImplementation 'io.projectreactor:reactor-test'
 }
 
-jar {
-    manifest{
-        attributes 'Main-Class':'com.rasmoo.raspaywfapi.RaspayWfApiApplication'
-    }
-}
-
 tasks.named('test') {
     useJUnitPlatform()
 }
